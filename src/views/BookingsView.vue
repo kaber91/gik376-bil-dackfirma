@@ -10,11 +10,11 @@ import {
 // Hämta den reaktiva listan från servicen
 const allBookings = getBookings(); 
 
-// --- 1. REAKTIVA STATE FÖR FILTER OCH SÖKNING ---
+// --- filter och sökning
 const searchQuery = ref('');
-const statusFilter = ref('alla'); // Standardvärde: Visa alla statusar
+const statusFilter = ref('alla'); // gör att den visar alla som default
 
-// --- 2. SÖKFUNKTION (Computed Property) ---
+// --- sökfunktion
 const searchedBookings = computed(() => {
     const query = searchQuery.value.toLowerCase();
     
@@ -32,7 +32,7 @@ const searchedBookings = computed(() => {
     });
 });
 
-// --- 3. FILTRERINGSFUNKTION (Computed Property) ---
+// --- filtrerar
 const filteredBookings = computed(() => {
     const filter = statusFilter.value;
     
@@ -86,7 +86,7 @@ const filteredBookings = computed(() => {
                             Markera som Avslutad
                         </button>
                         
-                        <button class="edit-btn">Redigera ✏️</button>
+                        <button class="edit-btn">Redigera</button>
 
                         <button 
                             @click="deleteBooking(booking.id)"
