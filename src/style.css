@@ -65,6 +65,18 @@ button:focus-visible {
   text-align: center;
 }
 
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 8px 12px;
+  border: 1px solid #555;
+  text-align: left;
+}
+
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -75,5 +87,8 @@ button:focus-visible {
   }
   button {
     background-color: #f9f9f9;
+  }
+  th, td {
+    border: 1px solid #ddd;
   }
 }
