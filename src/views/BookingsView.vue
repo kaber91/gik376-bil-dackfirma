@@ -33,7 +33,6 @@
 <script setup>
 import { ref } from 'vue'
 // Importera bokningsdata från JSON-filen.
-// Sökvägen är uppdaterad för att peka på den nya platsen i src/data/
 import bookingsData from '../data/bookings.json'
 
 
