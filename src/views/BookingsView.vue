@@ -102,7 +102,7 @@ const filteredBookings = computed(() => {
 </template>
 
 <style scoped>
-/* Standard styling från tidigare */
+/* Standard styling  */
 .controls-container { margin-bottom: 20px; display: flex; gap: 20px; }
 .search-input input { padding: 8px; border: 1px solid #ccc; width: 300px; }
 .filter-controls button { 
