@@ -3,17 +3,16 @@
 import { ref } from 'vue';
 import initialBookings from '../assets/bookings.json'; 
 
-// --- 1. REAKTIVT STATE ---
 const bookings = ref(initialBookings);
 
-// --- SIMULERING AV SPARA ---
+// --- fejk spara-funktion
 function simulateSave() {
     console.log("Bokningsdatan har uppdaterats (simulerad sparning)!");
 }
 
-// ------------------------------------
-// --- 2. IMPLEMENTERADE CRUD-FUNKTIONER ---
-// ------------------------------------
+
+// --- De olika funktionerna (crud) 
+
 
 /**
  * Exponerar den reaktiva listan av bokningar för vyer.
