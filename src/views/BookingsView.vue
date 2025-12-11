@@ -82,6 +82,7 @@ const filteredBookings = computed(() => {
           <p><strong>Datum:</strong> {{ booking.datum }}</p>
           <p><strong>Status:</strong> <span class="status-label">{{ booking.status }}</span></p>
         </div>
+    </div>
 <<<<<<< HEAD
 
         <div class="booking-list-wrapper">
