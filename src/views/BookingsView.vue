@@ -10,11 +10,11 @@ import {
 // Hämta den reaktiva listan från servicen
 const allBookings = getBookings(); 
 
-// --- 1. REAKTIVA STATE FÖR FILTER OCH SÖKNING ---
+// --- filter och sökning
 const searchQuery = ref('');
-const statusFilter = ref('alla'); // Standardvärde: Visa alla statusar
+const statusFilter = ref('alla'); // gör att den visar alla som default
 
-// --- 2. SÖKFUNKTION (Computed Property) ---
+// --- sökfunktion
 const searchedBookings = computed(() => {
     const query = searchQuery.value.toLowerCase();
     
@@ -32,7 +32,7 @@ const searchedBookings = computed(() => {
     });
 });
 
-// --- 3. FILTRERINGSFUNKTION (Computed Property) ---
+// --- filtrerar
 const filteredBookings = computed(() => {
     const filter = statusFilter.value;
     
@@ -82,6 +82,43 @@ const filteredBookings = computed(() => {
           <p><strong>Datum:</strong> {{ booking.datum }}</p>
           <p><strong>Status:</strong> <span class="status-label">{{ booking.status }}</span></p>
         </div>
+    </div>
+<<<<<<< HEAD
+
+        <div class="booking-list-wrapper">
+            
+            <p v-if="filteredBookings.length === 0">
+                Hittade inga bokningar som matchar sök- och filterkriterierna.
+            </p>
+
+            <ul v-else class="booking-list">
+                <li v-for="booking in filteredBookings" :key="booking.id" :class="booking.status">
+                    <div class="booking-info">
+                        <strong>{{ booking.kundNamn }} ({{ booking.regNr }})</strong><br>
+                        Tjänst: {{ booking.service }} | Status: <span class="status">{{ booking.status.toUpperCase() }}</span>
+                    </div>
+
+                    <div class="actions">
+                        <button 
+                            v-if="booking.status !== 'avslutad'" 
+                            @click="completeBooking(booking.id, 'Service utförd')"
+                            class="complete-btn"
+                        >
+                            Markera som Avslutad
+                        </button>
+                        
+                        <button class="edit-btn">Redigera</button>
+
+                        <button 
+                            @click="deleteBooking(booking.id)"
+                            class="delete-btn"
+                        >
+                            Ta bort 🗑️
+                        </button>
+                    </div>
+                </li>
+            </ul>
+=======
         <div class="booking-actions">
           <button v-if="booking.status === 'bokad'" @click="completeBooking(booking.id)" class="btn-complete">
             Markera som klar
@@ -89,6 +126,7 @@ const filteredBookings = computed(() => {
           <button @click="deleteBooking(booking.id)" class="btn-delete">
             Ta bort
           </button>
+>>>>>>> 78a10f94514c0ee62db50bf722623e6d8f7c368c
         </div>
       </div>
     </div>
