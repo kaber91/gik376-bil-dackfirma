@@ -48,21 +48,41 @@ const filteredBookings = computed(() => {
 </script>
 
 <template>
-    <section>
-        <h1>Mina Bokningar</h1>
+  <section>
+    <div class="header-container">
+      <h1>Bokningar</h1>
+      <p>Här kan du se och hantera alla bokningar.</p>
+    </div>
 
-        <div class="controls-container">
-            <div class="search-input">
-                <input type="text" v-model="searchQuery" placeholder="🔍 Sök kund, reg.nr eller service...">
-            </div>
+    <!-- Sök och filter -->
+    <div class="controls">
+      <input 
+        type="text" 
+        v-model="searchQuery" 
+        placeholder="Sök på namn, regnr, service..."
+        class="search-input"
+      />
+      <div class="filter-buttons">
+        <button @click="statusFilter = 'alla'" :class="{ active: statusFilter === 'alla' }">Alla</button>
+        <button @click="statusFilter = 'bokad'" :class="{ active: statusFilter === 'bokad' }">Bokade</button>
+        <button @click="statusFilter = 'klar'" :class="{ active: statusFilter === 'klar' }">Klara</button>
+      </div>
+    </div>
 
-            <div class="filter-controls">
-                <button @click="statusFilter = 'alla'" :class="{ active: statusFilter === 'alla' }">Alla</button>
-                <button @click="statusFilter = 'bokad'" :class="{ active: statusFilter === 'bokad' }">Bokade</button>
-                <button @click="statusFilter = 'pågående'" :class="{ active: statusFilter === 'pågående' }">Pågående</button>
-                <button @click="statusFilter = 'avslutad'" :class="{ active: statusFilter === 'avslutad' }">Avslutade</button>
-            </div>
+    <!-- Bokningslista -->
+    <div class="booking-list">
+      <div v-if="filteredBookings.length === 0" class="no-bookings">
+        <p>Inga bokningar matchade din sökning eller filter.</p>
+      </div>
+      <div v-else v-for="booking in filteredBookings" :key="booking.id" class="booking-card" :class="booking.status">
+        <div class="booking-info">
+          <h3>{{ booking.kundNamn }}</h3>
+          <p><strong>Reg.nr:</strong> {{ booking.regNr }}</p>
+          <p><strong>Service:</strong> {{ booking.service }}</p>
+          <p><strong>Datum:</strong> {{ booking.datum }}</p>
+          <p><strong>Status:</strong> <span class="status-label">{{ booking.status }}</span></p>
         </div>
+<<<<<<< HEAD
 
         <div class="booking-list-wrapper">
             
@@ -97,31 +117,110 @@ const filteredBookings = computed(() => {
                     </div>
                 </li>
             </ul>
+=======
+        <div class="booking-actions">
+          <button v-if="booking.status === 'bokad'" @click="completeBooking(booking.id)" class="btn-complete">
+            Markera som klar
+          </button>
+          <button @click="deleteBooking(booking.id)" class="btn-delete">
+            Ta bort
+          </button>
+>>>>>>> 78a10f94514c0ee62db50bf722623e6d8f7c368c
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 </template>
 
 <style scoped>
-/* Standard styling från tidigare */
-.controls-container { margin-bottom: 20px; display: flex; gap: 20px; }
-.search-input input { padding: 8px; border: 1px solid #ccc; width: 300px; }
-.filter-controls button { 
-    padding: 8px 15px; border: 1px solid #ccc; background-color: #f0f0f0; cursor: pointer; 
+.header-container {
+  text-align: center;
+  margin-bottom: 2rem;
 }
-.filter-controls button.active { 
-    background-color: #3498db; color: white; border-color: #3498db; 
+.controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  gap: 1rem;
 }
-.booking-list { list-style: none; padding: 0; }
-.booking-list li { 
-    display: flex; justify-content: space-between; align-items: center; 
-    padding: 10px; border-bottom: 1px solid #eee; 
+.search-input {
+  flex-grow: 1;
+  padding: 0.75rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
 }
-.booking-list li.avslutad { background-color: #e6e6e6; }
-.booking-list li.bokad { background-color: #f9f9e2; }
-.booking-list li.pågående { background-color: #e2f9e2; }
-.status { font-weight: bold; }
-.actions button { margin-left: 10px; padding: 5px 10px; cursor: pointer; }
-.delete-btn { background-color: #e74c3c; color: white; border: none; }
-.complete-btn { background-color: #2ecc71; color: white; border: none; }
-.edit-btn { background-color: #f39c12; color: white; border: none; }
+.filter-buttons button {
+  margin-left: 0.5rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: #f0f0f0;
+}
+.filter-buttons button.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+.booking-list {
+  display: grid;
+  gap: 1.5rem;
+}
+.booking-card {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  transition: box-shadow 0.2s ease-in-out;
+}
+.booking-card:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+.booking-card.klar {
+  background-color: #e9f5e9;
+  border-left: 5px solid #28a745;
+}
+.booking-card.bokad {
+  border-left: 5px solid #ffc107;
+}
+.booking-info h3 {
+  margin-top: 0;
+}
+.booking-info p {
+  margin: 0.25rem 0;
+  color: #555;
+}
+.status-label {
+  text-transform: capitalize;
+  font-weight: bold;
+}
+.booking-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.booking-actions button {
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  color: white;
+}
+.btn-complete {
+  background-color: #28a745;
+}
+.btn-delete {
+  background-color: #dc3545;
+}
+.no-bookings {
+  text-align: center;
+  padding: 2rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
 </style>
