@@ -1,46 +1,52 @@
 <script setup>
-import { reactive, ref } from 'vue';
-import { addBooking } from '../services/bookingService.js';
+import { reactive, ref } from "vue"
+import { addBooking } from "../services/bookingService.js"
 
-// Reaktiva variabler för formulärdata
 const form = reactive({
   kundNamn: "",
+  email: "",
+  telefon: "",
   regNr: "",
   datum: "",
+  tid: "",
   service: ""
-});
+})
 
-// För att visa meddelanden till användaren
-const successMessage = ref('');
-const errorMessage = ref('');
+const successMessage = ref("")
+const errorMessage = ref("")
 
-const handleSubmit = () => {
+function handleSubmit() {
   // Enkel validering
-  if (!form.kundNamn || !form.regNr || !form.datum || !form.service) {
-    errorMessage.value = 'Alla fält måste fyllas i.';
-    successMessage.value = '';
-    return;
+  if (
+    !form.kundNamn ||
+    !form.email ||
+    !form.telefon ||
+    !form.regNr ||
+    !form.datum ||
+    !form.tid ||
+    !form.service
+  ) {
+    errorMessage.value = "Alla fält måste fyllas i."
+    successMessage.value = ""
+    return
   }
 
-  // Anropa service-funktionen för att lägga till bokningen
-  addBooking({ ...form });
+  // Skicka ENDAST form-data (bookingService lägger själv till id + status)
+  addBooking({ ...form })
 
-  // Visa framgångsmeddelande och rensa formuläret
-  successMessage.value = `Bokning för ${form.kundNamn} har registrerats!`;
-  errorMessage.value = '';
-  
-  // Återställ formuläret
-  Object.keys(form).forEach(key => form[key] = "");
+  successMessage.value = `Tack ${form.kundNamn}! Din bokning ${form.datum} kl ${form.tid} är registrerad.`
+  errorMessage.value = ""
 
-  // Valfritt: Dölj meddelandet efter några sekunder
+  Object.keys(form).forEach(key => (form[key] = ""))
+
   setTimeout(() => {
-    successMessage.value = '';
-  }, 5000);
-};
+    successMessage.value = ""
+  }, 5000)
+}
 </script>
 
 <template>
-  <section>
+  <section class="booking-page">
     <div class="header-container">
       <h1>Boka Service</h1>
       <p>Fyll i formuläret nedan för att boka en ny servicetid.</p>
@@ -48,29 +54,69 @@ const handleSubmit = () => {
 
     <form @submit.prevent="handleSubmit" class="booking-form">
       <div class="form-group">
-        <label for="kundNamn">Kundens namn</label>
-        <input id="kundNamn" type="text" v-model="form.kundNamn" placeholder="T.ex. Karolina Berg" required>
+        <label for="kundNamn">Namn</label>
+        <input
+          id="kundNamn"
+          type="text"
+          v-model="form.kundNamn"
+          placeholder="T.ex. Karolina Berg"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="email">E-post</label>
+        <input
+          id="email"
+          type="email"
+          v-model="form.email"
+          placeholder="t.ex. namn@mail.se"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="telefon">Telefonnummer</label>
+        <input
+          id="telefon"
+          type="tel"
+          v-model="form.telefon"
+          placeholder="T.ex. 0701234567"
+          required
+        />
       </div>
 
       <div class="form-group">
         <label for="regNr">Registreringsnummer</label>
-        <input id="regNr" type="text" v-model="form.regNr" placeholder="T.ex. ABC 123" required>
+        <input
+          id="regNr"
+          type="text"
+          v-model="form.regNr"
+          placeholder="T.ex. ABC 123"
+          required
+        />
       </div>
 
       <div class="form-group">
-        <label for="service">Typ av service</label>
+        <label for="datum">Datum</label>
+        <input id="datum" type="date" v-model="form.datum" required />
+      </div>
+
+      <div class="form-group">
+        <label for="tid">Tid</label>
+        <input id="tid" type="time" v-model="form.tid" required />
+      </div>
+
+      <div class="form-group">
+        <label for="service">Typ av tjänst</label>
         <select id="service" v-model="form.service" required>
           <option value="" disabled>Välj en service...</option>
           <option value="Däckbyte">Däckbyte</option>
           <option value="Hjulinställning">Hjulinställning</option>
           <option value="Reparation">Reparation</option>
+          <option value="Service">Service</option>
           <option value="Övrigt">Övrigt</option>
         </select>
-      </div>
-
-      <div class="form-group">
-        <label for="datum">Önskat datum</label>
-        <input id="datum" type="date" v-model="form.datum" required>
       </div>
 
       <div v-if="successMessage" class="message success">{{ successMessage }}</div>
@@ -94,9 +140,11 @@ const handleSubmit = () => {
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
+
 .form-group {
   margin-bottom: 1.5rem;
 }
+
 .form-group label {
   display: block;
   margin-bottom: 0.5rem;
@@ -122,9 +170,11 @@ const handleSubmit = () => {
   cursor: pointer;
   transition: background-color 0.2s;
 }
+
 .submit-btn:hover {
   background-color: #0056b3;
 }
+
 .message {
   text-align: center;
   padding: 1rem;
