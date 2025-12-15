@@ -7,15 +7,15 @@ const bookings = ref(initialBookings);
 
 // --- fejk spara-funktion
 function simulateSave() {
-    console.log("Bokningsdatan har uppdaterats (simulerad sparning)!");
+    console.log("Bokningsdatan har uppdaterats!");
 }
 
 
-// --- De olika funktionerna (crud) 
+// --- De olika funktionerna (crud-delen) 
 
 
 /**
- * Exponerar den reaktiva listan av bokningar för vyer.
+ * Visar listan av bokningar.
  */
 export function getBookings() {
     return bookings;
@@ -60,7 +60,7 @@ export function deleteBooking(id) {
 }
 
 /**
- * Markera bokning som avslutad (Specialiserad Update)
+ * Markera bokning som avslutad 
  */
 export function completeBooking(id, performedAction) {
     updateBooking(id, { 
