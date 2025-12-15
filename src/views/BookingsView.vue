@@ -7,13 +7,6 @@ const allBookings = getBookings()
 const searchQuery = ref('')
 const statusFilter = ref('alla')
 
-// används när man klickar "Markera som klar"
-function markAsDone(booking) {
-  // enkel standardtext så completeBooking får sin parameter
-  const performedAction = booking.service || 'Service utförd'
-  completeBooking(booking.id, performedAction)
-}
-
 const searchedBookings = computed(() => {
   const query = searchQuery.value.toLowerCase()
 
@@ -30,85 +23,79 @@ const searchedBookings = computed(() => {
 
 const filteredBookings = computed(() => {
   const filter = statusFilter.value
-
   if (filter === 'alla') return searchedBookings.value
-
   return searchedBookings.value.filter(booking => booking.status === filter)
 })
 </script>
 
 <template>
   <section>
-    <div class="header-container">
-      <h1>Bokningar</h1>
-      <p>Här kan du se och hantera alla bokningar.</p>
-    </div>
+    <h1>Mina Bokningar</h1>
 
-    <div class="controls">
-      <input
-        type="text"
-        v-model="searchQuery"
-        placeholder="Sök på namn, regnr, service..."
-        class="search-input"
-      />
-      <div class="filter-buttons">
+    <div class="controls-container">
+      <div class="search-input">
+        <input type="text" v-model="searchQuery" placeholder="🔍 Sök kund, reg.nr eller service..." />
+      </div>
+
+      <div class="filter-controls">
         <button @click="statusFilter = 'alla'" :class="{ active: statusFilter === 'alla' }">Alla</button>
         <button @click="statusFilter = 'bokad'" :class="{ active: statusFilter === 'bokad' }">Bokade</button>
-
-        <!-- BYT klar -> avslutad -->
-        <button @click="statusFilter = 'avslutad'" :class="{ active: statusFilter === 'avslutad' }">Klara</button>
+        <button @click="statusFilter = 'avslutad'" :class="{ active: statusFilter === 'avslutad' }">Avslutade</button>
       </div>
     </div>
 
-    <div class="booking-list">
-      <div v-if="filteredBookings.length === 0" class="no-bookings">
-        <p>Inga bokningar matchade din sökning eller filter.</p>
-      </div>
+    <div class="booking-list-wrapper">
+      <p v-if="filteredBookings.length === 0">
+        Hittade inga bokningar som matchar sök- och filterkriterierna.
+      </p>
 
-      <div
-        v-else
-        v-for="booking in filteredBookings"
-        :key="booking.id"
-        class="booking-card"
-        :class="booking.status"
-      >
-        <div class="booking-info">
-          <h3>{{ booking.kundNamn }}</h3>
-          <p><strong>Reg.nr:</strong> {{ booking.regNr }}</p>
-          <p><strong>Service:</strong> {{ booking.service }}</p>
-          <p><strong>Datum:</strong> {{ booking.datum }} <span v-if="booking.tid">kl {{ booking.tid }}</span></p>
+      <ul v-else class="booking-list">
+        <li v-for="booking in filteredBookings" :key="booking.id" :class="booking.status">
+          <div class="booking-info">
+            <strong>{{ booking.kundNamn }} ({{ booking.regNr }})</strong><br />
+            Tjänst: {{ booking.service }} |
+            Status: <span class="status">{{ (booking.status || '').toUpperCase() }}</span>
+          </div>
 
-          <!-- Visa ev. extra fält från nya formuläret -->
-          <p v-if="booking.email"><strong>E-post:</strong> {{ booking.email }}</p>
-          <p v-if="booking.telefon"><strong>Telefon:</strong> {{ booking.telefon }}</p>
+          <div class="actions">
+            <button
+              v-if="booking.status !== 'avslutad'"
+              @click="completeBooking(booking.id, booking.service || 'Service utförd')"
+              class="complete-btn"
+            >
+              Markera som Avslutad
+            </button>
 
-          <p><strong>Status:</strong> <span class="status-label">{{ booking.status }}</span></p>
+            <!-- Redigera-knappen är ok att ha kvar men den gör inget än -->
+            <button class="edit-btn" disabled title="Kommer senare">Redigera</button>
 
-          <p v-if="booking.performedAction"><strong>Åtgärd:</strong> {{ booking.performedAction }}</p>
-        </div>
-
-        <div class="booking-actions">
-          <button
-            v-if="booking.status === 'bokad'"
-            @click="markAsDone(booking)"
-            class="btn-complete"
-          >
-            Markera som klar
-          </button>
-          <button @click="deleteBooking(booking.id)" class="btn-delete">
-            Ta bort
-          </button>
-        </div>
-      </div>
+            <button @click="deleteBooking(booking.id)" class="delete-btn">
+              Ta bort 🗑️
+            </button>
+          </div>
+        </li>
+      </ul>
     </div>
   </section>
 </template>
 
 <style scoped>
-/* din CSS kan vara kvar exakt som den är, men lägg till detta: */
-.booking-card.avslutad {
-  background-color: #e9f5e9;
-  border-left: 5px solid #28a745;
+.controls-container { margin-bottom: 20px; display: flex; gap: 20px; align-items: center; }
+.search-input input { padding: 8px; border: 1px solid #ccc; width: 300px; border-radius: 6px; }
+.filter-controls button {
+  padding: 8px 15px; border: 1px solid #ccc; background-color: #f0f0f0; cursor: pointer; border-radius: 6px;
 }
+.filter-controls button.active { background-color: #3498db; color: white; border-color: #3498db; }
+.booking-list { list-style: none; padding: 0; margin: 0; }
+.booking-list li {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px; border-bottom: 1px solid #eee;
+}
+.booking-list li.avslutad { background-color: #e6e6e6; }
+.booking-list li.bokad { background-color: #f9f9e2; }
+.status { font-weight: bold; }
+.actions button { margin-left: 10px; padding: 6px 10px; cursor: pointer; border-radius: 6px; }
+.delete-btn { background-color: #e74c3c; color: white; border: none; }
+.complete-btn { background-color: #2ecc71; color: white; border: none; }
+.edit-btn { background-color: #f39c12; color: white; border: none; opacity: 0.6; cursor: not-allowed; }
 </style>
-
